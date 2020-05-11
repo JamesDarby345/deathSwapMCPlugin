@@ -1,4 +1,4 @@
-This code is for a deathswap plugin for a spigot server in minecraft 1.15.2
+This code is for a deathswap plugin for a spigot server in minecraft 1.15.2 using the Bukkit library
 It was written by James Darby for 3 players (works with 2) during May 2020 based on the idea
 originally conceived by sethbling though he used command blocks
 in game. The player, after a set amount of time swap positions in
