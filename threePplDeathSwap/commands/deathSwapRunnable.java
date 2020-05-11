@@ -33,6 +33,8 @@ public class deathSwapRunnable extends BukkitRunnable{
 				Location loc1 = null;
 				Location loc2 = null;
 				Location loc3 = null;
+				
+				//if dead dont set location
 				if(!p1.getGameMode().equals(GameMode.SPECTATOR)) {
 					loc1 = p1.getLocation();
 				} 
@@ -42,6 +44,8 @@ public class deathSwapRunnable extends BukkitRunnable{
 				if(!p3.getGameMode().equals(GameMode.SPECTATOR)) {
 					loc3 = p3.getLocation();
 				} 
+				
+				//checks if a player is dead and swaps the surviving players
 				if(loc1 == null) {
 					Bukkit.broadcastMessage(p1.getName() + "p1 is dead, swapping other two");
 					freezePlayers(null,p2,p3);
@@ -58,7 +62,7 @@ public class deathSwapRunnable extends BukkitRunnable{
 					freezePlayers(p1,p2,null);
 					p1.teleport(loc2);
 					p2.teleport(loc1);
-				}else if ((loc1 == null && loc2 == null) ||(loc1 == null && loc3 == null) ||(loc2 == null && loc3 == null)) {
+				}else if ((loc1 == null && loc2 == null) ||(loc1 == null && loc3 == null) ||(loc2 == null && loc3 == null)) {//2 players are dead, game is over, theoretically should never run
 					Main.freeze = false;
 					Bukkit.getScheduler().cancelTasks(plugin);
 				}else {
@@ -69,6 +73,8 @@ public class deathSwapRunnable extends BukkitRunnable{
 				} 
 				Bukkit.broadcastMessage(Utils.chat(plugin.getConfig().getString("swaped_message")));
 		}
+	
+	//makes it so players can't see or move much while swapping
 	private void freezePlayers(Player p1,Player p2, Player p3) {
 		int tpDelay = 300;
 		Main.freeze = true;
