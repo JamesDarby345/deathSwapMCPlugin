@@ -1,0 +1,15 @@
+This code is for a deathswap plugin for a spigot server in minecraft.
+It was written by James Darby for 3 players during May 2020 based on the idea
+originally conceived by sethbling though he used command blocks
+in game. The player, after a set amount of time swap positions in
+game and try to trap kill each other. To use you need to put a jar file
+of all the code, the most up to date one should be in the repository,
+and put this in the plugin folder of the server. The command itself is
+/deathswap player1 player2 player3 you can repeat players for only 2 player games
+or for testing. It will put all players in survival and start a countdown based
+on server ticks, giving a 30 sec, 10sec, and 5-1 second warning before the swap.
+During the swap the players are telepoted to eachother positions and have many effects 
+applied so that they cant see much, cant move much, cant take damage or lose air levels, 
+to give the server a chance to load the chunks the player now occupies so the player
+has a fair chance to react. /swap player1 player2 player3 will do the swap instantly
+and is mostly for testing purposes.
