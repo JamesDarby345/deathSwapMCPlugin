@@ -21,9 +21,12 @@ public class deathListener implements Listener{
 		Bukkit.getPluginManager().registerEvents(this,plugin);
 	}
 	
+	//sets players to spectator on death and checks if game is over
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		Player p = e.getEntity();
+		
+		//if a player killed this player, maybe this is cheating
 		if(e.getEntity().getKiller() instanceof Player) {
 			Player killer = e.getEntity().getKiller();
 			Bukkit.broadcastMessage(Utils.chat(plugin.getConfig().getString("cheat_message")
@@ -32,16 +35,17 @@ public class deathListener implements Listener{
 		p.setGameMode(GameMode.SPECTATOR);
 		Player winner = null;
 		int count = 0;
-		//Bukkit.broadcastMessage("spectator set");
+		
+		//gets online player count and sets potential winner
 		for(Player pl : plugin.getServer().getOnlinePlayers()) {
-			//Bukkit.broadcastMessage(pl.getName() + " checking if dead");
 			if(!pl.getGameMode().equals(GameMode.SURVIVAL)) {
 				count++;
 			}else {
 				winner = pl;
 			}
 		}
-		//Bukkit.broadcastMessage("done checks, checking if there is a winner " + winner.getName());
+		
+		//if there is only 1 player still in survival, they won, end the game
 		if(count == plugin.getServer().getOnlinePlayers().size()-1) {
 			Bukkit.broadcastMessage(Utils.chat("&a" + winner.getName() + " won! good job"));
 			Main.freeze = false;
