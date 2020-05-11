@@ -1,0 +1,12 @@
+name: 3pplDeathSwap
+version: 1.0
+author: Object277
+main: threePplDeathSwap.Main
+description: death swap 3 ppl
+
+commands:
+  deathSwap:
+    aliases: [yeet]
+    description: This is the death swap command
+  swap:
+    description: This is the swap command

@@ -1,0 +1,7 @@
+start_message: "&cDeath Swap has been intiated by <player>"
+cheat_message: "<player> died by <player2> hand, thats cheating <player2>"
+swapping_message: "&cSwapping in <time> seconds"
+swaped_message: "&cSwaped!"
+win_message: "<player> won! good job"
+intialDelay: 6000
+roundDelay: 5400
