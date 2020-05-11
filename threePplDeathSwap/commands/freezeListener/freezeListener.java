@@ -21,32 +21,32 @@ public class freezeListener implements Listener{
 		Bukkit.getPluginManager().registerEvents(this,plugin);
 	}
 	
+	//blocks players moving while swapping
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerMove(PlayerMoveEvent event) {
 		if(Main.freeze) {
 			Player player = event.getPlayer();
 			Location location = player.getLocation();
-			double hp = player.getHealth();
-			int air = player.getRemainingAir();
-			player.teleport(location);	
-			player.setHealth(hp);
-			player.setRemainingAir(air);
-			
+			player.teleport(location);				
 		}
 	}
 	
+	//blocks damage events to player while swapping
+	@EventHandler
 	public void onEntityDamageEvent(EntityDamageEvent e) {
 		Entity E = e.getEntity();
 		if(E instanceof Player && Main.freeze) {
-			Player player = (Player)E;
+			//Player player = (Player)E;
 			e.setCancelled(true);
 		}
 	}
 	
+	//blocks air level changes when swapping
+	@EventHandler
 	public void onEntityAirChangeEvent(EntityAirChangeEvent e) {
 		Entity E = e.getEntity();
 		if(E instanceof Player && Main.freeze) {
-			Player player = (Player)E;
+			//Player player = (Player)E;
 			e.setCancelled(true);
 		}
 	}
