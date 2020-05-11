@@ -23,15 +23,23 @@ public class deathSwapCommand implements CommandExecutor{
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		
+		//ensures a player is the sender
 		if (!(sender instanceof Player)) {
 			sender.sendMessage("Only players can execute this command!");
 			return true;
 		}
-		if(cmd.getName().equalsIgnoreCase("deathSwap")) { //check which command
+		
+		//checks that it is the deathswap command
+		if(cmd.getName().equalsIgnoreCase("deathSwap")) {
 			Player p = (Player) sender;
+			
+			//checks senders permissions
 			if(p.hasPermission("deathSwap.use")) {
 				Bukkit.broadcastMessage(Utils.chat(plugin.getConfig().getString("start_message")
 						.replace("<player>", p.getName())));
+				
+				//collects all the players from arguments, sets gamemode and starts the death and freeze listeners
 				Player p1 = Bukkit.getPlayer(args[0]);
 				Player p2 = Bukkit.getPlayer(args[1]);
 				Player p3 = Bukkit.getPlayer(args[2]);
@@ -40,9 +48,12 @@ public class deathSwapCommand implements CommandExecutor{
 				p3.setGameMode(GameMode.SURVIVAL);
 				deathListener dL = new deathListener(plugin);
 				freezeListener fL = new freezeListener(plugin);
-				int intialDelay = 6000;
-				int roundDelay = 5400;
-				int tpDelay = 300;
+				
+				int intialDelay = 6000; //delay in ticks, 20 ticks = 1sec if server is running properly
+				int roundDelay = 5400; //delay between rounds
+				int tpDelay = 300; //how long the players are frozen and invunerable
+				
+				//countdown tasks
 				Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 					public void run() {
 						Bukkit.broadcastMessage(Utils.chat(plugin.getConfig().getString("swapping_message")
@@ -85,12 +96,16 @@ public class deathSwapCommand implements CommandExecutor{
         						.replace("<time>", "1")));
 					}
 				},intialDelay+580,roundDelay);
+				
+				//swap task
 				Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 					public void run() {
 						BukkitRunnable deathSwapTask = new deathSwapRunnable(plugin,p1,p2,p3,Bukkit.getWorld("world"));
         				deathSwapTask.runTask(plugin);
 					}
 				},intialDelay+600,roundDelay);
+				
+				//switches off freeze after tpDelay ticks from swap
 				Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 					public void run() {
 						Main.freeze = false;
