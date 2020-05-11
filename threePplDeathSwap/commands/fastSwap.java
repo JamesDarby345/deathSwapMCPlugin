@@ -18,24 +18,22 @@ public class fastSwap implements CommandExecutor{
 		this.plugin = plugin;
 		plugin.getCommand("swap").setExecutor(this);
 	}
+	
+	//testing method that instantly swaps players
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		//Bukkit.broadcastMessage("oncommand");
 		if(cmd.getName().equalsIgnoreCase("swap")) {
 			Player p = (Player) sender;
 			if(p.hasPermission("deathSwap.use")) {
-				//Bukkit.broadcastMessage("oncommand is swap and has perms");
 				Player p1 = Bukkit.getPlayer(args[0]);
 				Player p2 = Bukkit.getPlayer(args[1]);
 				Player p3 = Bukkit.getPlayer(args[2]);
 				p1.setGameMode(GameMode.SURVIVAL);
 				p2.setGameMode(GameMode.SURVIVAL);
 				p3.setGameMode(GameMode.SURVIVAL);
-				//Bukkit.broadcastMessage(p1.getName()+ " " + p2.getName() + " " + p3.getName());
 				deathListener dL = new deathListener(plugin);
 				freezeListener fL = new freezeListener(plugin);
 				Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 					public void run() {
-						//Bukkit.broadcastMessage("ass");
 						BukkitRunnable deathSwapTask = new deathSwapRunnable(plugin,p1,p2,p3,Bukkit.getWorld("world"));
 	    				deathSwapTask.runTask(plugin);
 					}
