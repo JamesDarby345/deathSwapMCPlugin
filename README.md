@@ -27,4 +27,4 @@ on server ticks, giving a 30 sec, 10sec, and 5-1 second warning before the next 
 ### Swap Information
 
 During the swap the players are teleported to other's positions and effects are applied to compensate for possible slow chunk loading.
-These effects include blindness, slowness, damage resistance and the inability to lose air levels.
+These effects include blindness, slowness, damage invulnerability and the inability to lose air levels.
