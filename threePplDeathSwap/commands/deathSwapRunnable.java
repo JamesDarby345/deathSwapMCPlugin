@@ -1,5 +1,7 @@
 package threePplDeathSwap.commands;
 
+import java.util.ArrayList;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -16,85 +18,65 @@ import threePplDeathSwap.Main;
 
 public class deathSwapRunnable extends BukkitRunnable{
 	private final JavaPlugin plugin;
-	private Player p1;
-	private Player p2;
-	private Player p3;
+	private ArrayList<Player> players;
 	private World myWorld;
+	private int tpDelay;
 	
-	public deathSwapRunnable (JavaPlugin plugin, Player p1, Player p2, Player p3, World myWorld) {
+	public deathSwapRunnable (JavaPlugin plugin, ArrayList<Player> players, World myWorld, int tpDelay) {
 		this.plugin = plugin;
-		this.p1 = p1;
-		this.p2 = p2;
-		this.p3 = p3;
+		this.players = players;
 		this.myWorld = myWorld;
+		this.tpDelay = tpDelay;
 	}
 	
 	public void run() {
-				Location loc1 = null;
-				Location loc2 = null;
-				Location loc3 = null;
+				ArrayList<Location> locs = new ArrayList<Location>(players.size());
+				//locs.add(null);
+				String deadPlayers = "";
 				
-				//if dead dont set location
-				if(!p1.getGameMode().equals(GameMode.SPECTATOR)) {
-					loc1 = p1.getLocation();
-				} 
-				if(!p2.getGameMode().equals(GameMode.SPECTATOR)) {
-					loc2 = p2.getLocation();
+				//if dead dont add location to array
+				for(int i = 0;i<players.size();i++) {
+					if(!players.get(i).getGameMode().equals(GameMode.SURVIVAL)) {
+						deadPlayers += players.get(i).getName() + " ";
+					}else {
+						locs.add(players.get(i).getLocation());
+					}
 				}
-				if(!p3.getGameMode().equals(GameMode.SPECTATOR)) {
-					loc3 = p3.getLocation();
-				} 
 				
-				//checks if a player is dead and swaps the surviving players
-				if(loc1 == null) {
-					Bukkit.broadcastMessage(p1.getName() + "p1 is dead, swapping other two");
-					freezePlayers(null,p2,p3);
-					p2.teleport(loc3);
-					p3.teleport(loc2);
-				} else if(loc2 == null) {
-					Bukkit.broadcastMessage(p2.getName() + "p2 is dead, swapping other two");
-					freezePlayers(p1,null,p3);
-					p1.teleport(loc3);
-					p3.teleport(loc1);
-				} else if(loc3 == null) {
-					Bukkit.broadcastMessage(p3.getName() + "p3 is dead, swapping other two");
-					Bukkit.broadcastMessage(p3.getName() + " loc is " + loc3 + " " + loc2 + " " + loc1);
-					freezePlayers(p1,p2,null);
-					p1.teleport(loc2);
-					p2.teleport(loc1);
-				}else if ((loc1 == null && loc2 == null) ||(loc1 == null && loc3 == null) ||(loc2 == null && loc3 == null)) {//2 players are dead, game is over, theoretically should never run
-					Main.freeze = false;
-					Bukkit.getScheduler().cancelTasks(plugin);
-				}else {
-					freezePlayers(p1,p2,p3);
-					p1.teleport(loc2);
-					p2.teleport(loc3);
-					p3.teleport(loc1);	
-				} 
-				Bukkit.broadcastMessage(Utils.chat(plugin.getConfig().getString("swaped_message")));
+				freezePlayers(players, tpDelay);				
+				int j = 1;
+				
+				//swaps all surviving players to the next location in the array
+				for(int i = 0;i<players.size();i++) {
+					if(players.get(i).getGameMode().equals(GameMode.SURVIVAL)) {
+						if(j == locs.size()) {
+							j = 0;
+						} 
+						players.get(0).sendMessage(players.get(i) + " " + locs.get(j));
+						players.get(i).teleport(locs.get(j));
+						j++;
+						
+					}
+				}
+				
+				//if there are dead players, says who they are
+				if(!deadPlayers.contentEquals("")) {
+					Bukkit.broadcastMessage(deadPlayers + "are dead swapping the others.");
+				}
+				Bukkit.broadcastMessage(Utils.chat(plugin.getConfig().getString("swaped_message")));//standard message
 		}
 	
 	//makes it so players can't see or move much while swapping
-	private void freezePlayers(Player p1,Player p2, Player p3) {
-		int tpDelay = 300;
+	private void freezePlayers(ArrayList<Player> players, int tpDelay) {
 		Main.freeze = true;
-		if(p1 != null) {
-			p1.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, tpDelay-5, 9999));
-			p1.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, tpDelay-5, 9999));
-			p1.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, tpDelay-5, 9999));
-			p1.setNoDamageTicks(tpDelay+5);
-		}
-		if(p2 != null) {
-			p2.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, tpDelay-5, 9999));
-			p2.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, tpDelay-5, 9999));
-			p2.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, tpDelay-5, 9999));
-			p2.setNoDamageTicks(tpDelay+5);
-		}
-		if(p3 != null) {
-			p3.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, tpDelay-5, 9999));
-			p3.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, tpDelay-5, 9999));
-			p3.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, tpDelay-5, 9999));
-			p3.setNoDamageTicks(tpDelay+5);
+		for(int i = 0;i<players.size();i++) {
+			if(players.get(i) != null && !players.get(i).getGameMode().equals(GameMode.SPECTATOR)){
+				players.get(i).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, tpDelay-5, 9999));
+				players.get(i).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, tpDelay-5, 9999));
+				players.get(i).addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, tpDelay-5, 9999));
+				players.get(i).addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, tpDelay-5, 9999));
+				players.get(i).setNoDamageTicks(tpDelay+5);
+			}
 		}
 	}
 }

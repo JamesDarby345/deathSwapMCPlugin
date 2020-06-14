@@ -1,12 +1,16 @@
 package threePplDeathSwap.commands;
 
+import java.util.ArrayList;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -40,13 +44,15 @@ public class deathSwapCommand implements CommandExecutor{
 						.replace("<player>", p.getName())));
 				
 				//collects all the players from arguments, sets gamemode and starts the death and freeze listeners
-				Player p1 = Bukkit.getPlayer(args[0]);
-				Player p2 = Bukkit.getPlayer(args[1]);
-				Player p3 = Bukkit.getPlayer(args[2]);
-				p1.setGameMode(GameMode.SURVIVAL);
-				p2.setGameMode(GameMode.SURVIVAL);
-				p3.setGameMode(GameMode.SURVIVAL);
-				deathListener dL = new deathListener(plugin);
+				ArrayList<Player> players = new ArrayList<Player>();
+				for(int i = 0;i<args.length;i++) {
+					
+					players.add(Bukkit.getPlayer(args[i]));
+					//p.sendMessage(args[i]+ " "+players.get(i));
+					players.get(i).setGameMode(GameMode.SURVIVAL);
+				}
+
+				deathListener dL = new deathListener(plugin, players);
 				freezeListener fL = new freezeListener(plugin);
 				
 				int intialDelay = 6000; //delay in ticks, 20 ticks = 1sec if server is running properly
@@ -100,7 +106,7 @@ public class deathSwapCommand implements CommandExecutor{
 				//swap task
 				Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 					public void run() {
-						BukkitRunnable deathSwapTask = new deathSwapRunnable(plugin,p1,p2,p3,Bukkit.getWorld("world"));
+						BukkitRunnable deathSwapTask = new deathSwapRunnable(plugin,players,Bukkit.getWorld("world"), tpDelay);
         				deathSwapTask.runTask(plugin);
 					}
 				},intialDelay+600,roundDelay);

@@ -1,5 +1,7 @@
 package threePplDeathSwap.commands;
 
+import java.util.ArrayList;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
@@ -24,17 +26,17 @@ public class fastSwap implements CommandExecutor{
 		if(cmd.getName().equalsIgnoreCase("swap")) {
 			Player p = (Player) sender;
 			if(p.hasPermission("deathSwap.use")) {
-				Player p1 = Bukkit.getPlayer(args[0]);
-				Player p2 = Bukkit.getPlayer(args[1]);
-				Player p3 = Bukkit.getPlayer(args[2]);
-				p1.setGameMode(GameMode.SURVIVAL);
-				p2.setGameMode(GameMode.SURVIVAL);
-				p3.setGameMode(GameMode.SURVIVAL);
-				deathListener dL = new deathListener(plugin);
+				ArrayList<Player> players = new ArrayList<Player>();
+				for(int i = 0;i<args.length;i++) {
+					players.add(Bukkit.getPlayer(args[i]));
+					//p.sendMessage(args[i]+ " "+players.get(i));
+					players.get(i).setGameMode(GameMode.SURVIVAL);
+				}
+				deathListener dL = new deathListener(plugin, players);
 				freezeListener fL = new freezeListener(plugin);
 				Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 					public void run() {
-						BukkitRunnable deathSwapTask = new deathSwapRunnable(plugin,p1,p2,p3,Bukkit.getWorld("world"));
+						BukkitRunnable deathSwapTask = new deathSwapRunnable(plugin,players,Bukkit.getWorld("world"), 200);
 	    				deathSwapTask.runTask(plugin);
 					}
 				},0);

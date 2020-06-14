@@ -1,4 +1,6 @@
 package threePplDeathSwap.commands.deathListener;
+import java.util.ArrayList;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -15,9 +17,11 @@ import threePplDeathSwap.commands.utils.Utils;
 public class deathListener implements Listener{
 	
 	private static Main plugin;
+	private ArrayList<Player> players;
 	
-	public deathListener (Main plugin) {
+	public deathListener (Main plugin, ArrayList<Player> players) {
 		this.plugin = plugin;
+		this.players = players;
 		Bukkit.getPluginManager().registerEvents(this,plugin);
 	}
 	
@@ -37,7 +41,7 @@ public class deathListener implements Listener{
 		int count = 0;
 		
 		//gets online player count and sets potential winner
-		for(Player pl : plugin.getServer().getOnlinePlayers()) {
+		for(Player pl : players) {
 			if(!pl.getGameMode().equals(GameMode.SURVIVAL)) {
 				count++;
 			}else {
@@ -46,7 +50,7 @@ public class deathListener implements Listener{
 		}
 		
 		//if there is only 1 player still in survival, they won, end the game
-		if(count == plugin.getServer().getOnlinePlayers().size()-1) {
+		if(count >= players.size()-1) {
 			Bukkit.broadcastMessage(Utils.chat("&a" + winner.getName() + " won! good job"));
 			Main.freeze = false;
 			Bukkit.getScheduler().cancelTasks(plugin);
